@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: invoiceflow
+          POSTGRES_PASSWORD: invoiceflow
+          POSTGRES_DB: invoiceflow
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U invoiceflow"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://invoiceflow:invoiceflow@localhost:5432/invoiceflow
+      # CI-only value; production keys live in the host's environment settings.
+      DJANGO_SECRET_KEY: ci-only-${{ github.run_id }}-not-used-outside-this-workflow-run-xyz
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.2  # publishes exact tags only, no v10
+      - name: Install dependencies
+        run: uv sync --locked
+      - name: Lint
+        run: uv run ruff check .
+      - name: Format
+        run: uv run ruff format --check .
+      - name: Migrations are up to date
+        run: uv run python manage.py makemigrations --check --dry-run
+      - name: Production settings pass Django's deploy checks
+        run: uv run python manage.py check --deploy --fail-level WARNING
+      - name: Tests
+        run: uv run pytest

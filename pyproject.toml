@@ -1,0 +1,42 @@
+[project]
+name = "invoiceflow"
+version = "0.1.0"
+description = "Invoicing for Australian consultancies: clients, GST invoices, and payments."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=6.1,<6.2",
+    "djangorestframework>=3.18",
+    "django-htmx>=1.29",
+    "dj-database-url>=3.1",
+    "psycopg[binary]>=3.3",
+    "python-dotenv>=1.2",
+    "whitenoise>=6.12",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1",
+    "pytest-django>=4.14",
+    "ruff>=0.17",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["test_*.py"]
+addopts = "--strict-markers"
+# WhiteNoise warns that collectstatic hasn't run; tests don't need it.
+filterwarnings = ["ignore:No directory at:UserWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "DJ", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests use plain asserts and throwaway passwords.
+"**/tests/*" = ["S101", "S105", "S106"]
+"conftest.py" = ["S101", "S105", "S106"]
