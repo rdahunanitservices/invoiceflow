@@ -21,6 +21,13 @@
     <input type="hidden" name="next" value="{{ next }}">
     <button type="submit" class="btn-primary w-full">Sign in</button>
   </form>
-  {% block demo %}{% endblock %}
+  <div class="card mt-6 border-brand-100 bg-brand-50 p-6 text-center">
+    <h2 class="font-semibold text-brand-900">Just looking?</h2>
+    <p class="mt-1 text-sm text-slate-600">Open a private demo workspace with sample clients and invoices. No sign-up; it's deleted after a day.</p>
+    <form method="post" action="{% url 'demo:start' %}" class="mt-4">
+      {% csrf_token %}
+      <button type="submit" class="btn-primary w-full">Try the live demo</button>
+    </form>
+  </div>
 </div>
 {% endblock %}

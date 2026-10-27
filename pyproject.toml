@@ -21,6 +21,12 @@ dev = [
     "ruff>=0.17",
 ]
 
+# Vercel runs this after installing dependencies (and runs collectstatic itself).
+# Migrations are additive and backwards compatible, so running them before the
+# new code goes live is safe.
+[tool.vercel.scripts]
+build = "python manage.py migrate --noinput"
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings"
 python_files = ["test_*.py"]

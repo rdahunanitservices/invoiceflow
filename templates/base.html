@@ -34,6 +34,12 @@
     </div>
   </header>
   {% endwith %}
+  {% if user.organization.is_demo %}
+  <div class="border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm text-amber-900">
+    Private demo workspace, deleted after a day. Change anything you like. The API is at
+    <a class="font-semibold underline" href="/api/">/api/</a>.
+  </div>
+  {% endif %}
   {% endif %}
 
   <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
