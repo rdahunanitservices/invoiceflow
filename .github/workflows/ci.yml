@@ -31,7 +31,7 @@ jobs:
       DJANGO_SECRET_KEY: ci-only-${{ github.run_id }}-not-used-outside-this-workflow-run-xyz
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.3.2  # publishes exact tags only, no v10
       - name: Install dependencies
         run: uv sync --locked
       - name: Lint
