@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "accounts",
     "core",
+    "billing",
 ]
 
 MIDDLEWARE = [
