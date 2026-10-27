@@ -21,6 +21,12 @@ def plain_http_test_client(settings):
     settings.SECURE_SSL_REDIRECT = False
 
 
+@pytest.fixture(autouse=True)
+def fast_password_hashing(settings):
+    """Real hashers are slow on purpose; tests don't need that."""
+    settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+
 @pytest.fixture
 def org(db):
     return Organization.objects.create(name="Harbour Advisory")

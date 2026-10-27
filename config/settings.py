@@ -146,7 +146,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 25,
     "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.UserRateThrottle"],
-    "DEFAULT_THROTTLE_RATES": {"user": "120/minute"},
+    "DEFAULT_THROTTLE_RATES": {"user": "120/minute", "anon": "10/minute"},
+    "EXCEPTION_HANDLER": "core.api.exception_handler",
 }
 
 LOGGING = {
