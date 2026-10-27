@@ -125,6 +125,11 @@ class LineItem(models.Model):
         return self.description
 
 
+class PaymentQuerySet(models.QuerySet):
+    def for_org(self, org):
+        return self.filter(invoice__organization=org)
+
+
 class Payment(models.Model):
     class Method(models.TextChoices):
         BANK_TRANSFER = "bank", "Bank transfer"
@@ -138,6 +143,8 @@ class Payment(models.Model):
     method = models.CharField(max_length=5, choices=Method, default=Method.BANK_TRANSFER)
     reference = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = PaymentQuerySet.as_manager()
 
     class Meta:
         ordering = ["paid_on", "id"]

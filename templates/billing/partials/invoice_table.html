@@ -1,0 +1,42 @@
+{% load billing_tags %}
+<div id="invoice-table">
+  <nav class="flex gap-1 overflow-x-auto" aria-label="Filter by status">
+    {% for value, label in filters %}
+    <a href="?status={{ value }}" hx-get="{% url 'billing:invoice_list' %}?status={{ value }}" hx-target="#invoice-table" hx-swap="outerHTML" hx-push-url="true"
+       class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium {% if status == value %}bg-brand-600 text-white{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+       {% if status == value %}aria-current="true"{% endif %}>{{ label }}</a>
+    {% endfor %}
+  </nav>
+  <div class="card mt-4 overflow-hidden">
+    {% if invoices %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-5 py-3 font-semibold">Number</th>
+            <th class="px-5 py-3 font-semibold">Client</th>
+            <th class="px-5 py-3 font-semibold">Due</th>
+            <th class="px-5 py-3 font-semibold">Status</th>
+            <th class="px-5 py-3 text-right font-semibold">Total</th>
+            <th class="px-5 py-3 text-right font-semibold">Balance</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for invoice in invoices %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-5 py-3 font-medium whitespace-nowrap"><a class="text-brand-700 hover:underline" href="{% url 'billing:invoice_detail' invoice.pk %}">{{ invoice.display_number }}</a></td>
+            <td class="px-5 py-3">{{ invoice.client.name }}</td>
+            <td class="px-5 py-3 whitespace-nowrap text-slate-600">{{ invoice.due_date|date:"j M Y" }}</td>
+            <td class="px-5 py-3">{% include "billing/partials/status_badge.html" %}</td>
+            <td class="px-5 py-3 text-right whitespace-nowrap">{{ invoice.total|aud }}</td>
+            <td class="px-5 py-3 text-right whitespace-nowrap font-semibold">{% if invoice.status == "sent" %}{{ invoice.balance|aud }}{% else %}<span class="font-normal text-slate-400">–</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="px-5 py-10 text-center text-sm text-slate-500">No invoices here.</p>
+    {% endif %}
+  </div>
+</div>

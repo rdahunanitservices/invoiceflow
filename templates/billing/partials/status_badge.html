@@ -1,0 +1,5 @@
+{% if invoice.is_overdue %}<span class="inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">Overdue</span>
+{% elif invoice.status == "draft" %}<span class="inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-700">Draft</span>
+{% elif invoice.status == "sent" %}<span class="inline-flex rounded-full bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-800">Sent</span>
+{% elif invoice.status == "paid" %}<span class="inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">Paid</span>
+{% else %}<span class="inline-flex rounded-full bg-rose-50 px-2 py-0.5 text-xs font-semibold text-rose-700 line-through">Void</span>{% endif %}

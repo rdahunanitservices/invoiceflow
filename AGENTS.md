@@ -11,6 +11,8 @@ HTMX, Tailwind CSS, PostgreSQL. Read this before changing anything.
 - Checks before reporting done, all must pass:
   `uv run ruff check .`, `uv run ruff format --check .`,
   `uv run python manage.py makemigrations --check --dry-run`, `uv run pytest`
+- Tailwind (after changing classes in templates or `assets/app.css`): `npm ci && npm run css`.
+  The built `static/css/app.css` is committed; CI fails if it's out of date.
 
 ## How to work
 

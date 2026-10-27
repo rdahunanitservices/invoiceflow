@@ -1,0 +1,13 @@
+{
+  "name": "invoiceflow-assets",
+  "private": true,
+  "description": "Front-end build only. The app itself is Django; built files are committed under static/.",
+  "scripts": {
+    "css": "tailwindcss -i assets/app.css -o static/css/app.css --minify",
+    "htmx": "node -e \"require('fs').copyFileSync('node_modules/htmx.org/dist/htmx.min.js', 'static/js/htmx.min.js')\""
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "htmx.org": "2.0.11"
+  }
+}

@@ -1,0 +1,56 @@
+{% load static %}<!doctype html>
+<html lang="en-AU" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {# Swap 422 responses so form errors render; other 4xx/5xx stay as errors. #}
+  <meta name="htmx-config" content='{"responseHandling":[{"code":"204","swap":false},{"code":"[23]..","swap":true},{"code":"422","swap":true},{"code":"[45]..","swap":false,"error":true}]}'>
+  <title>{% block title %}InvoiceFlow{% endblock %} · InvoiceFlow</title>
+  <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+</head>
+<body class="flex min-h-full flex-col font-sans text-slate-900 antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  {% if user.is_authenticated %}
+  {% with current=request.resolver_match.url_name %}
+  <header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
+      <a href="{% url 'billing:dashboard' %}" class="flex items-center gap-2 text-lg font-bold text-brand-900">
+        <span class="grid size-7 place-items-center rounded-md bg-brand-600 text-sm text-white" aria-hidden="true">IF</span>
+        InvoiceFlow
+      </a>
+      <nav class="order-last flex w-full gap-1 overflow-x-auto text-sm font-medium sm:order-none sm:w-auto" aria-label="Main">
+        <a href="{% url 'billing:dashboard' %}" class="rounded-md px-3 py-1.5 {% if current == 'dashboard' %}bg-brand-50 text-brand-700{% else %}text-slate-600 hover:bg-slate-100{% endif %}" {% if current == 'dashboard' %}aria-current="page"{% endif %}>Dashboard</a>
+        <a href="{% url 'billing:invoice_list' %}" class="rounded-md px-3 py-1.5 {% if 'invoice' in current %}bg-brand-50 text-brand-700{% else %}text-slate-600 hover:bg-slate-100{% endif %}" {% if 'invoice' in current %}aria-current="page"{% endif %}>Invoices</a>
+        <a href="{% url 'billing:client_list' %}" class="rounded-md px-3 py-1.5 {% if current == 'client_list' %}bg-brand-50 text-brand-700{% else %}text-slate-600 hover:bg-slate-100{% endif %}" {% if current == 'client_list' %}aria-current="page"{% endif %}>Clients</a>
+      </nav>
+      <div class="ml-auto flex items-center gap-3 text-sm">
+        <span class="hidden text-slate-500 sm:inline">{{ user.organization.name|default:"No organisation" }}</span>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn-secondary py-1.5">Sign out</button>
+        </form>
+      </div>
+    </div>
+  </header>
+  {% endwith %}
+  {% endif %}
+
+  <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+    {% if messages %}
+    <div class="mb-6 space-y-2">
+      {% for message in messages %}
+      <p class="rounded-md border px-4 py-3 text-sm {% if message.tags == 'error' %}border-rose-200 bg-rose-50 text-rose-800{% else %}border-emerald-200 bg-emerald-50 text-emerald-800{% endif %}" role="status">{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+    InvoiceFlow, a demo project by Reynard Dahunan ·
+    Django, DRF, HTMX, Tailwind CSS, PostgreSQL ·
+    <a class="underline hover:text-slate-700" href="https://github.com/rdahunanitservices/invoiceflow">Source on GitHub</a>
+  </footer>
+</body>
+</html>
