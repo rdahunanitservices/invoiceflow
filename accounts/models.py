@@ -11,6 +11,9 @@ class Organization(models.Model):
     abn = models.CharField("ABN", max_length=14, blank=True, validators=[validate_abn])
     # Allocated under a row lock in billing.services.create_invoice.
     next_invoice_number = models.PositiveIntegerField(default=1, editable=False)
+    is_demo = models.BooleanField(
+        default=False, help_text="Throwaway workspace; purged after a day."
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
