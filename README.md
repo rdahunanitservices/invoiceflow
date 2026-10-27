@@ -5,7 +5,7 @@
 Invoicing for Australian consultancies: clients with ABNs, invoices with 10% GST,
 payments, and overdue tracking.
 
-**Live demo: LIVE_DEMO_URL**. Click *Try the live demo* to get a private
+**Live demo: [rdahunan-invoiceflow.vercel.app](https://rdahunan-invoiceflow.vercel.app)**. Click *Try the live demo* to get a private
 workspace with sample data. There's no sign-up, and it's deleted after a day.
 
 Django 6.1 · Django REST Framework · HTMX · Tailwind CSS · PostgreSQL ·
@@ -71,22 +71,22 @@ The API is browsable at `/api/`, and demo users are already signed in.
 
 ```bash
 # Get a token
-curl -X POST https://HOST/api/auth/token/ -d username=you -d password=...
+curl -X POST https://rdahunan-invoiceflow.vercel.app/api/auth/token/ -d username=you -d password=...
 
 # Create an invoice with its lines in one request
-curl -X POST https://HOST/api/invoices/ \
+curl -X POST https://rdahunan-invoiceflow.vercel.app/api/invoices/ \
   -H "Authorization: Token $TOKEN" -H "Content-Type: application/json" \
   -d '{"client": 1, "lines": [
         {"description": "Advisory hours", "quantity": "7.5", "unit_price": "180.00"},
         {"description": "Travel", "quantity": "1", "unit_price": "85.50", "taxable": false}]}'
 
 # Send it, then record a payment
-curl -X POST https://HOST/api/invoices/42/send/ -H "Authorization: Token $TOKEN"
-curl -X POST https://HOST/api/invoices/42/payments/ -H "Authorization: Token $TOKEN" \
+curl -X POST https://rdahunan-invoiceflow.vercel.app/api/invoices/42/send/ -H "Authorization: Token $TOKEN"
+curl -X POST https://rdahunan-invoiceflow.vercel.app/api/invoices/42/payments/ -H "Authorization: Token $TOKEN" \
   -d amount=500.00 -d reference="EFT 1234"
 
 # Overdue invoices
-curl "https://HOST/api/invoices/?status=overdue" -H "Authorization: Token $TOKEN"
+curl "https://rdahunan-invoiceflow.vercel.app/api/invoices/?status=overdue" -H "Authorization: Token $TOKEN"
 ```
 
 Business-rule errors are `400` responses with a readable message, for example
