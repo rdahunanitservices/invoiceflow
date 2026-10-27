@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}New invoice{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-xl">
+  <a href="{% url 'billing:invoice_list' %}" class="text-sm text-slate-500 hover:text-slate-700">← Invoices</a>
+  <h1 class="mt-2 text-2xl font-bold">New invoice</h1>
+  {% if not has_clients %}
+  <div class="card mt-6 p-6 text-sm">
+    <p>You need a client before you can invoice. <a class="font-medium text-brand-700 underline" href="{% url 'billing:client_list' %}">Add a client</a>.</p>
+  </div>
+  {% else %}
+  <form method="post" class="card mt-6 space-y-5 p-6">
+    {% csrf_token %}
+    {% for error in form.non_field_errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+    <div>
+      <label class="label" for="{{ form.client.id_for_label }}">Client</label>
+      <select class="input" id="{{ form.client.id_for_label }}" name="client" required>
+        {% for value, label in form.client.field.choices %}
+        <option value="{{ value }}" {% if form.client.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      {% for error in form.client.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div>
+        <label class="label" for="{{ form.issue_date.id_for_label }}">Issue date</label>
+        <input class="input" type="date" id="{{ form.issue_date.id_for_label }}" name="issue_date" value="{{ form.issue_date.value|stringformat:'s' }}" required>
+        {% for error in form.issue_date.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+      <div>
+        <label class="label" for="{{ form.due_date.id_for_label }}">Due date <span class="font-normal text-slate-400">(optional)</span></label>
+        <input class="input" type="date" id="{{ form.due_date.id_for_label }}" name="due_date" value="{{ form.due_date.value|default_if_none:'' }}">
+        <p class="mt-1 text-xs text-slate-500">{{ form.due_date.help_text }}</p>
+        {% for error in form.due_date.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+    </div>
+    <div>
+      <label class="label" for="{{ form.notes.id_for_label }}">Notes <span class="font-normal text-slate-400">(optional)</span></label>
+      <textarea class="input" id="{{ form.notes.id_for_label }}" name="notes" rows="3">{{ form.notes.value|default_if_none:'' }}</textarea>
+    </div>
+    <button type="submit" class="btn-primary">Create draft</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

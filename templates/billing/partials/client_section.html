@@ -1,0 +1,50 @@
+{% load billing_tags %}
+<div id="client-section" class="grid gap-6 lg:grid-cols-3 lg:items-start">
+  <section class="card overflow-hidden lg:col-span-2" aria-label="Client list">
+    {% if clients %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-5 py-3 font-semibold">Name</th>
+            <th class="px-5 py-3 font-semibold">ABN</th>
+            <th class="px-5 py-3 font-semibold">Terms</th>
+            <th class="px-5 py-3 text-right font-semibold">Invoices</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for client in clients %}
+          <tr>
+            <td class="px-5 py-3"><div class="font-medium">{{ client.name }}</div><div class="text-slate-500">{{ client.email }}</div></td>
+            <td class="px-5 py-3 whitespace-nowrap text-slate-600">{{ client.abn|abn|default:"–" }}</td>
+            <td class="px-5 py-3 whitespace-nowrap text-slate-600">{{ client.payment_terms_days }} days</td>
+            <td class="px-5 py-3 text-right">{{ client.invoice_count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="px-5 py-10 text-center text-sm text-slate-500">No clients yet. Add your first one to start invoicing.</p>
+    {% endif %}
+  </section>
+
+  <section class="card p-5" aria-labelledby="add-client-heading">
+    <h2 id="add-client-heading" class="font-semibold">Add a client</h2>
+    <form class="mt-4 space-y-4" method="post" action="{% url 'billing:client_list' %}"
+          hx-post="{% url 'billing:client_list' %}" hx-target="#client-section" hx-swap="outerHTML" hx-disabled-elt="find button">
+      {% csrf_token %}
+      {% for field in form %}
+      <div>
+        <label class="label" for="{{ field.id_for_label }}">{{ field.label }}{% if not field.field.required %} <span class="font-normal text-slate-400">(optional)</span>{% endif %}</label>
+        <input class="input" id="{{ field.id_for_label }}" name="{{ field.html_name }}" value="{{ field.value|default_if_none:'' }}"
+               type="{% if field.name == 'email' %}email{% elif field.name == 'payment_terms_days' %}number{% else %}text{% endif %}"
+               {% if field.field.required %}required{% endif %}
+               {% if field.errors %}aria-invalid="true" aria-describedby="{{ field.id_for_label }}-error"{% endif %}>
+        {% for error in field.errors %}<p class="field-error" id="{{ field.id_for_label }}-error">{{ error }}</p>{% endfor %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn-primary w-full">Add client</button>
+    </form>
+  </section>
+</div>

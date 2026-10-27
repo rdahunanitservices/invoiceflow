@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ invoice.display_number }}{% endblock %}
+{% block content %}
+<a href="{% url 'billing:invoice_list' %}" class="text-sm text-slate-500 hover:text-slate-700">← Invoices</a>
+<div class="mt-2">{% include "billing/partials/invoice_body.html" %}</div>
+{% endblock %}

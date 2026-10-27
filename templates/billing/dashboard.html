@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load billing_tags %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-2xl font-bold">Dashboard</h1>
+  <a href="{% url 'billing:invoice_create' %}" class="btn-primary">New invoice</a>
+</div>
+
+<dl class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="card p-5">
+    <dt class="text-sm text-slate-500">Outstanding</dt>
+    <dd class="mt-1 text-2xl font-bold">{{ outstanding.amount|aud }}</dd>
+    <dd class="text-xs text-slate-500">{{ outstanding.count }} sent invoice{{ outstanding.count|pluralize }}</dd>
+  </div>
+  <div class="card p-5 {% if overdue.count %}border-amber-300 bg-amber-50{% endif %}">
+    <dt class="text-sm {% if overdue.count %}text-amber-800{% else %}text-slate-500{% endif %}">Overdue</dt>
+    <dd class="mt-1 text-2xl font-bold {% if overdue.count %}text-amber-900{% endif %}">{{ overdue.amount|aud }}</dd>
+    <dd class="text-xs {% if overdue.count %}text-amber-800{% else %}text-slate-500{% endif %}">{{ overdue.count }} invoice{{ overdue.count|pluralize }} past due</dd>
+  </div>
+  <div class="card p-5">
+    <dt class="text-sm text-slate-500">Paid, last 30 days</dt>
+    <dd class="mt-1 text-2xl font-bold text-emerald-700">{{ paid_last_30|aud }}</dd>
+  </div>
+  <div class="card p-5">
+    <dt class="text-sm text-slate-500">Drafts</dt>
+    <dd class="mt-1 text-2xl font-bold">{{ drafts }}</dd>
+    <dd class="text-xs text-slate-500">not sent yet</dd>
+  </div>
+</dl>
+
+<div class="mt-8 grid gap-6 lg:grid-cols-2 lg:items-start">
+  <section class="card overflow-hidden" aria-labelledby="overdue-heading">
+    <h2 id="overdue-heading" class="border-b border-slate-200 px-5 py-3 font-semibold">Chase these first</h2>
+    {% if overdue_invoices %}
+    <ul class="divide-y divide-slate-100">
+      {% for invoice in overdue_invoices %}
+      <li><a href="{% url 'billing:invoice_detail' invoice.pk %}" class="flex items-center justify-between gap-3 px-5 py-3 text-sm hover:bg-slate-50">
+        <span><span class="font-medium">{{ invoice.client.name }}</span> <span class="text-slate-500">· {{ invoice.display_number }} · due {{ invoice.due_date|date:"j M" }}</span></span>
+        <span class="font-semibold whitespace-nowrap text-amber-800">{{ invoice.balance|aud }}</span>
+      </a></li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="px-5 py-8 text-center text-sm text-slate-500">Nothing overdue. Nice.</p>
+    {% endif %}
+  </section>
+
+  <section class="card overflow-hidden" aria-labelledby="recent-heading">
+    <h2 id="recent-heading" class="border-b border-slate-200 px-5 py-3 font-semibold">Recent invoices</h2>
+    {% if recent_invoices %}
+    <ul class="divide-y divide-slate-100">
+      {% for invoice in recent_invoices %}
+      <li><a href="{% url 'billing:invoice_detail' invoice.pk %}" class="flex items-center justify-between gap-3 px-5 py-3 text-sm hover:bg-slate-50">
+        <span class="flex flex-wrap items-center gap-x-2"><span class="font-medium">{{ invoice.display_number }}</span> <span class="text-slate-500">{{ invoice.client.name }}</span></span>
+        <span class="flex items-center gap-3">{% include "billing/partials/status_badge.html" %}<span class="font-semibold whitespace-nowrap">{{ invoice.total|aud }}</span></span>
+      </a></li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="px-5 py-8 text-center text-sm text-slate-500">No invoices yet. <a class="font-medium text-brand-700 underline" href="{% url 'billing:invoice_create' %}">Create your first one.</a></p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
